@@ -377,21 +377,28 @@ function doSubmit() {
     email:        F.email
   };
 
-  // fetch() でGASのdoPostに送信
-  fetch(GAS_URL, {
-    method:  'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body:    JSON.stringify(payload)
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(res) {
+  // JSONP方式でGASに送信（CORSを回避）
+  var callbackName = 'gasCallback_' + Date.now();
+  var encodedBody  = encodeURIComponent(JSON.stringify(payload));
+
+  window[callbackName] = function(res) {
+    // scriptタグを削除
+    var el = document.getElementById('jsonp_script');
+    if (el) el.parentNode.removeChild(el);
+    delete window[callbackName];
     hideOv();
     showStep3(ts, res);
-  })
-  .catch(function(err) {
+  };
+
+  var script = document.createElement('script');
+  script.id  = 'jsonp_script';
+  script.src = GAS_URL + '?callback=' + callbackName + '&body=' + encodedBody;
+  script.onerror = function() {
+    delete window[callbackName];
     hideOv();
-    showStep3(ts, { success: false, error: err.message });
-  });
+    showStep3(ts, { success: false, error: 'ネットワークエラー' });
+  };
+  document.body.appendChild(script);
 }
 
 // ── STEP 3 ──
