@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base target="_top">
+<title>契約書への署名</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f3; --white:#fff; --surface:#efece7;
+  --border:#dedad2; --border2:#c0bbb1;
+  --text:#1a1814; --muted:#78746a; --dim:#aeaaa2;
+  --accent:#1e4d8c; --al:rgba(30,77,140,0.08);
+  --green:#166639; --gl:rgba(22,102,57,0.09);
+  --red:#b52e2e;
+  --shadow:0 1px 3px rgba(26,24,20,0.06),0 4px 16px rgba(26,24,20,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif;color:var(--text);padding-bottom:80px;}
+
+.topbar{background:var(--white);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 5px rgba(26,24,20,0.07);}
+.tb-brand{font-size:14px;font-weight:700;}
+.tb-id{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px 8px;}
+.tb-ssl{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;}
+
+.wrap{max-width:680px;margin:0 auto;padding:32px 16px;}
+
+.steps{display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
+.st{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.stc{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);transition:all 0.3s;}
+.stc.on{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 0 0 3px var(--al);}
+.stc.ok{border-color:var(--green);background:var(--green);color:#fff;}
+.stl{font-size:10px;color:var(--dim);white-space:nowrap;}
+.st.on .stl{color:var(--accent);font-weight:500;}
+.st.ok .stl{color:var(--green);}
+.sl{flex:1;max-width:52px;height:1px;background:var(--border);margin-top:-15px;transition:background 0.3s;}
+.sl.ok{background:var(--green);}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin-bottom:13px;overflow:hidden;}
+.ch{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.chlb{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--muted);flex-shrink:0;}
+.cht{font-size:14px;font-weight:500;}
+.chs{font-size:11px;color:var(--muted);margin-top:3px;}
+.cb{padding:20px;}
+
+.ov{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 16px;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;}
+.ovl{font-size:10px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
+.ovv{font-size:13px;font-weight:500;}
+.ovbig{font-family:'DM Mono',monospace;font-size:17px;color:var(--accent);}
+
+.fl{margin-bottom:15px;}
+.fl label{display:block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.req{color:var(--red);margin-left:2px;}
+.fl input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;font-family:'Noto Sans JP',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;-webkit-appearance:none;}
+.fl input:focus{border-color:var(--accent);background:var(--white);box-shadow:0 0 0 3px var(--al);}
+.fl input::placeholder{color:var(--dim);font-size:13px;}
+.fl input.err{border-color:var(--red);background:#fff8f8;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+
+/* ── 手書き署名キャンバス ── */
+.sig-area{margin-bottom:6px;}
+.sig-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sig-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+.sig-req{color:var(--red);margin-left:2px;}
+.btn-clear-sig{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:4px 11px;cursor:pointer;transition:all 0.15s;}
+.btn-clear-sig:hover{color:var(--red);border-color:rgba(181,46,46,0.3);}
+.canvas-wrap{position:relative;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;box-shadow:inset 0 1px 4px rgba(26,24,20,0.05);}
+.canvas-wrap.active{border-color:var(--accent);box-shadow:inset 0 1px 4px rgba(26,24,20,0.05),0 0 0 3px var(--al);}
+#sigCanvas{display:block;width:100%;height:180px;cursor:crosshair;touch-action:none;}
+.sig-baseline{position:absolute;bottom:44px;left:5%;right:5%;height:1px;background:rgba(30,77,140,0.15);pointer-events:none;}
+.sig-placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:rgba(0,0,0,0.2);letter-spacing:0.1em;pointer-events:none;transition:opacity 0.2s;white-space:nowrap;}
+.sig-placeholder.hide{opacity:0;}
+.sig-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;}
+.sig-err{font-size:11px;color:var(--red);margin-top:5px;display:none;}
+.sig-err.show{display:block;}
+
+/* Agreement */
+.agbox{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px;margin-top:4px;}
+.aglbl{display:flex;align-items:flex-start;gap:11px;cursor:pointer;}
+.aglbl input[type=checkbox]{width:21px;height:21px;flex-shrink:0;accent-color:var(--accent);cursor:pointer;margin-top:1px;}
+.agtxt{font-size:13px;line-height:1.85;}
+.agtxt small{display:block;font-size:11px;color:var(--muted);margin-top:4px;}
+.tsrow{margin-top:11px;padding:9px 12px;background:var(--white);border:1px solid var(--border);border-radius:7px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);transition:all 0.2s;}
+.tsrow.on{color:var(--green);border-color:rgba(22,102,57,0.3);background:var(--gl);}
+.agree-err{font-size:11px;color:var(--red);margin-top:5px;display:none;}
+.agree-err.show{display:block;}
+
+/* Buttons */
+.btnrow{display:flex;gap:9px;justify-content:flex-end;margin-top:20px;}
+.bbk{background:var(--white);color:var(--muted);border:1.5px solid var(--border);border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;transition:all 0.18s;}
+.bbk:hover{color:var(--text);border-color:var(--border2);}
+.bnx{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px rgba(30,77,140,0.22);display:flex;align-items:center;gap:6px;}
+.bnx:hover{background:#163d74;transform:translateY(-1px);}
+.bnx:active{transform:none;}
+.bnx:disabled{background:var(--dim);box-shadow:none;cursor:not-allowed;transform:none;}
+.bng{background:var(--green);box-shadow:0 2px 8px rgba(22,102,57,0.2);}
+.bng:hover{background:#0e4a28;}
+
+/* Overlay */
+.ovly{display:none;position:fixed;inset:0;background:rgba(247,246,243,0.93);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:13px;}
+.ovly.show{display:flex;}
+.spin{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp 0.75s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.spin-msg{font-size:13px;color:var(--muted);}
+
+/* Complete */
+.done{text-align:center;padding:8px 0 2px;}
+.dchk{width:72px;height:72px;border-radius:50%;background:var(--gl);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;animation:pp 0.45s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 4px 16px rgba(22,102,57,0.14);}
+@keyframes pp{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.done h2{font-family:'Noto Serif JP',serif;font-size:19px;margin-bottom:6px;}
+.done p{font-size:13px;color:var(--muted);line-height:1.9;}
+.dinfo{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;text-align:left;font-size:12px;line-height:2.1;color:var(--muted);margin:18px 0;}
+.dinfo strong{color:var(--text);}
+.cnote{font-size:11px;color:var(--dim);margin-top:14px;line-height:1.7;text-align:center;}
+
+/* Error */
+.errpg{text-align:center;padding:68px 18px;}
+.errpg .ei{font-size:42px;margin-bottom:13px;}
+.errpg h2{font-size:17px;margin-bottom:6px;}
+.errpg p{font-size:13px;color:var(--muted);line-height:1.8;}
+
+@media(max-width:500px){
+  .cb,.ch{padding-left:14px;padding-right:14px;}
+  .g2{grid-template-columns:1fr;}
+  .btnrow{flex-direction:column-reverse;}
+  .bnx,.bbk{width:100%;justify-content:center;}
+  .ov{grid-template-columns:1fr;}
+  .sl{max-width:28px;}
+}
+</style>
+</head>
+<body>
+
+<div id="gasdata" data-encoded="<?= encodedData ?>" style="display:none"></div>
+
+<div class="topbar">
+  <div class="tb-brand">契約書 電子締結</div>
+  <div class="tb-id" id="tbid">—</div>
+  <div class="tb-ssl">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M6 1L1.5 3.2V6c0 2.5 1.9 4.8 4.5 5.3C9.1 10.8 11 8.5 11 6V3.2L6 1z"/>
+    </svg>
+    SSL暗号化
+  </div>
+</div>
+
+<div class="ovly" id="ovly">
+  <div class="spin"></div>
+  <div class="spin-msg" id="ovmsg">処理中...</div>
+</div>
+
+<div class="wrap" id="root">
+  <div class="errpg"><div class="ei">⏳</div><h2>読み込み中...</h2><p>しばらくお待ちください</p></div>
+</div>
+
+<script>
+var C   = null;
+var F   = {};
+var sat = null;
+var sigCanvas, sigCtx, sigDrawing = false, sigLastX = 0, sigLastY = 0, sigHasData = false;
+
+function fy(v) { if (!v) return '—'; return '¥' + parseInt(v).toLocaleString('ja-JP'); }
+function fd(v) { if (!v) return '—'; var d = new Date(v); return isNaN(d.getTime()) ? String(v) : d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'}); }
+function vl(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function showOv(m) { document.getElementById('ovmsg').textContent = m||'処理中...'; document.getElementById('ovly').classList.add('show'); }
+function hideOv() { document.getElementById('ovly').classList.remove('show'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Boot ──
+window.addEventListener('load', function() {
+  try {
+    var el = document.getElementById('gasdata');
+    var encoded = el ? (el.getAttribute('data-encoded') || '') : '';
+    if (!encoded) { renderErr(); return; }
+
+    // GASテンプレートがHTMLエスケープした文字を元に戻す
+    encoded = encoded
+      .replace(/&#43;/g, '+')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s/g, '');  // 空白・改行を除去
+
+    // URLセーフBase64（-と_）を通常Base64（+と/）に戻す
+    encoded = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    // パディング補完
+    while (encoded.length % 4 !== 0) { encoded += '='; }
+
+    C = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    if (!C || !C.id) { renderErr(); return; }
+    document.getElementById('tbid').textContent = 'ID: ' + C.id;
+    showStep1();
+  } catch(e) {
+    console.error('Boot error:', e.message, e);
+    renderErr();
+  }
+});
+
+// ── Progress ──
+function progHtml(cur) {
+  function sc(n) { return cur > n ? 'ok' : cur === n ? 'on' : ''; }
+  function lc(n) { return cur > n ? '✓' : String(n); }
+  return '<div class="steps">'
+    + '<div class="st '+sc(1)+'"><div class="stc '+sc(1)+'">'+lc(1)+'</div><div class="stl">情報入力</div></div>'
+    + '<div class="sl '+(cur>1?'ok':'')+'"></div>'
+    + '<div class="st '+sc(2)+'"><div class="stc '+sc(2)+'">'+lc(2)+'</div><div class="stl">署名・同意</div></div>'
+    + '<div class="sl '+(cur>2?'ok':'')+'"></div>'
+    + '<div class="st '+(cur===3?'on':'')+'"><div class="stc '+(cur===3?'on':'')+'">3</div><div class="stl">完了</div></div>'
+    + '</div>';
+}
+
+// ── STEP 1 ──
+function showStep1() {
+  document.getElementById('root').innerHTML = progHtml(1)
+    + '<div class="card">'
+    +   '<div class="ch"><div class="chlb">CONTRACT</div><div class="cht">ご契約内容</div></div>'
+    +   '<div class="cb">'
+    +     '<div class="ov">'
+    +       '<div><div class="ovl">賃借開始日</div><div class="ovv">'+fd(C.startDate)+'</div></div>'
+    +       '<div><div class="ovl">賃借終了日</div><div class="ovv">'+fd(C.endDate)+'</div></div>'
+    +       '<div><div class="ovl">月額金額</div><div class="ovv ovbig">'+fy(C.amount)+'</div></div>'
+    +       (C.notes ? '<div><div class="ovl">特記事項</div><div class="ovv" style="font-size:11px;color:var(--muted)">'+esc(C.notes.substring(0,40))+'</div></div>' : '')
+    +     '</div>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="card">'
+    +   '<div class="ch"><div class="chlb">STEP 01</div><div><div class="cht">お客様情報の入力</div><div class="chs">下記の項目をご入力ください</div></div></div>'
+    +   '<div class="cb">'
+    +     '<div class="fl"><label>賃借人名（会社名）<span class="req">*</span></label><input type="text" id="f_tn" placeholder="株式会社〇〇" value="'+esc(F.tenantName||'')+'"></div>'
+    +     '<div class="fl"><label>担当者氏名<span class="req">*</span></label><input type="text" id="f_pn" placeholder="山田 太郎" value="'+esc(F.personName||'')+'"></div>'
+    +     '<div class="fl"><label>契約年月日<span class="req">*</span></label><input type="text" id="f_cd" placeholder="2025年1月1日" value="'+esc(F.contractDate||'')+'" inputmode="text"></div>'
+    +     '<div class="fl"><label>住所<span class="req">*</span></label><input type="text" id="f_ad" placeholder="東京都渋谷区〇〇 1-2-3" value="'+esc(F.address||'')+'"></div>'
+    +     '<div class="g2">'
+    +       '<div class="fl"><label>店舗名<span class="req">*</span></label><input type="text" id="f_sn" placeholder="〇〇店" value="'+esc(F.shopName||'')+'"></div>'
+    +       '<div class="fl"><label>店舗住所<span class="req">*</span></label><input type="text" id="f_sa" placeholder="大阪市〇〇区 4-5-6" value="'+esc(F.shopAddress||'')+'"></div>'
+    +     '</div>'
+    +     '<div class="fl"><label>電話番号<span class="req">*</span></label><input type="tel" id="f_tel" placeholder="090-0000-0000" value="'+esc(F.tel||'')+'"></div>'
+    +     '<div class="fl"><label>メールアドレス<span class="req">*</span></label><input type="email" id="f_em" placeholder="taro@example.com" value="'+esc(F.email||'')+'"></div>'
+    +     '<div class="btnrow"><button class="bnx" onclick="goStep2()">署名へ進む →</button></div>'
+    +   '</div>'
+    + '</div>';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goStep2() {
+  var ids = ['f_tn','f_pn','f_cd','f_ad','f_sn','f_sa','f_tel','f_em'];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (!el || !el.value.trim()) { if(el){el.classList.add('err');el.focus();} return; }
+    el.classList.remove('err');
+  }
+  F = { tenantName:vl('f_tn'), personName:vl('f_pn'), contractDate:vl('f_cd'), address:vl('f_ad'), shopName:vl('f_sn'), shopAddress:vl('f_sa'), tel:vl('f_tel'), email:vl('f_em') };
+  showStep2();
+}
+
+// ── STEP 2 ── 手書き署名 + 同意
+function showStep2() {
+  document.getElementById('root').innerHTML = progHtml(2)
+    + '<div class="card">'
+    +   '<div class="ch"><div class="chlb">STEP 02</div><div><div class="cht">直筆署名・同意確認</div><div class="chs">署名欄に直筆でご署名の上、同意にチェックを入れてください</div></div></div>'
+    +   '<div class="cb">'
+
+    // 手書き署名エリア
+    +     '<div class="sig-area">'
+    +       '<div class="sig-label-row">'
+    +         '<span class="sig-label">直筆署名<span class="sig-req">*</span></span>'
+    +         '<button class="btn-clear-sig" onclick="clearSig()">クリア</button>'
+    +       '</div>'
+    +       '<div class="canvas-wrap" id="canvasWrap">'
+    +         '<canvas id="sigCanvas"></canvas>'
+    +         '<div class="sig-baseline"></div>'
+    +         '<div class="sig-placeholder" id="sigPlaceholder">タッチペン・マウス・指でご署名ください</div>'
+    +       '</div>'
+    +       '<div class="sig-hint">※ こちらの直筆署名が電子署名として契約書に記録されます</div>'
+    +       '<div class="sig-err" id="sigErr">署名を入力してください</div>'
+    +     '</div>'
+
+    // 同意チェック
+    +     '<div class="agbox">'
+    +       '<label class="aglbl">'
+    +         '<input type="checkbox" id="agchk" onchange="onAgree()">'
+    +         '<div class="agtxt">契約内容を確認し、すべての条項に同意します。上記の直筆署名をもって電子署名とし、本契約を締結することに同意します。'
+    +           '<small>※ 直筆署名および本チェックは電子署名法に基づく電子署名として法的効力を有します。署名日時はタイムスタンプとして記録されます。</small>'
+    +         '</div>'
+    +       '</label>'
+    +       '<div class="tsrow" id="tsrow">署名日時：同意チェック後に記録されます</div>'
+    +       '<div class="agree-err" id="agErr">同意のチェックを入れてください</div>'
+    +     '</div>'
+
+    +     '<div class="btnrow">'
+    +       '<button class="bbk" onclick="showStep1()">← 戻る</button>'
+    +       '<button class="bnx bng" id="subbtn" onclick="doSubmit()" disabled>✓ 申込を完了する</button>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>';
+
+  window.scrollTo({top:0,behavior:'smooth'});
+  initCanvas();
+}
+
+// ── Canvas 初期化 ──
+function initCanvas() {
+  sigCanvas  = document.getElementById('sigCanvas');
+  sigCtx     = sigCanvas.getContext('2d');
+  sigHasData = false;
+
+  var dpr = window.devicePixelRatio || 1;
+  var w   = sigCanvas.parentElement.clientWidth;
+  sigCanvas.width  = w * dpr;
+  sigCanvas.height = 180 * dpr;
+  sigCanvas.style.width  = w + 'px';
+  sigCanvas.style.height = '180px';
+  sigCtx.scale(dpr, dpr);
+  sigCtx.strokeStyle = '#1a1814';
+  sigCtx.lineWidth   = 2.5;
+  sigCtx.lineCap     = 'round';
+  sigCtx.lineJoin    = 'round';
+
+  function getPos(e) {
+    var rect = sigCanvas.getBoundingClientRect();
+    var src  = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+  function startDraw(e) {
+    e.preventDefault();
+    sigDrawing = true;
+    var p = getPos(e); sigLastX = p.x; sigLastY = p.y;
+    document.getElementById('canvasWrap').classList.add('active');
+  }
+  function draw(e) {
+    e.preventDefault();
+    if (!sigDrawing) return;
+    var p = getPos(e);
+    sigCtx.beginPath();
+    sigCtx.moveTo(sigLastX, sigLastY);
+    sigCtx.lineTo(p.x, p.y);
+    sigCtx.stroke();
+    sigLastX = p.x; sigLastY = p.y;
+    if (!sigHasData) {
+      sigHasData = true;
+      document.getElementById('sigPlaceholder').classList.add('hide');
+      document.getElementById('sigErr').classList.remove('show');
+    }
+  }
+  function endDraw() {
+    sigDrawing = false;
+    document.getElementById('canvasWrap').classList.remove('active');
+  }
+
+  sigCanvas.addEventListener('mousedown',  startDraw);
+  sigCanvas.addEventListener('mousemove',  draw);
+  sigCanvas.addEventListener('mouseup',    endDraw);
+  sigCanvas.addEventListener('mouseleave', endDraw);
+  sigCanvas.addEventListener('touchstart', startDraw, { passive: false });
+  sigCanvas.addEventListener('touchmove',  draw,      { passive: false });
+  sigCanvas.addEventListener('touchend',   endDraw);
+}
+
+function clearSig() {
+  if (!sigCtx) return;
+  var dpr = window.devicePixelRatio || 1;
+  sigCtx.clearRect(0, 0, sigCanvas.width / dpr, sigCanvas.height / dpr);
+  sigHasData = false;
+  document.getElementById('sigPlaceholder').classList.remove('hide');
+}
+
+// ── Agreement ──
+function onAgree() {
+  var ok = document.getElementById('agchk').checked;
+  document.getElementById('subbtn').disabled = !ok;
+  document.getElementById('agErr').classList.remove('show');
+  var r = document.getElementById('tsrow');
+  if (ok) {
+    sat = new Date();
+    var s = sat.toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    r.textContent = '✅ 署名日時：' + s + '　（タイムスタンプ記録済み）';
+    r.classList.add('on');
+  } else {
+    sat = null;
+    r.textContent = '署名日時：同意チェック後に記録されます';
+    r.classList.remove('on');
+  }
+}
+
+// ── Submit ──
+function doSubmit() {
+  if (!sigHasData) {
+    document.getElementById('sigErr').classList.add('show');
+    return;
+  }
+  if (!document.getElementById('agchk').checked) {
+    document.getElementById('agErr').classList.add('show');
+    return;
+  }
+
+  var ts      = sat ? sat.toLocaleString('ja-JP') : new Date().toLocaleString('ja-JP');
+  var sigData = sigCanvas.toDataURL('image/png');  // 署名画像（Base64）
+
+  showOv('契約書を処理しています...');
+
+  var payload = {
+    contractId:   C.id,
+    customerName: C.customerName || '',
+    signedAt:     ts,
+    sigImageData: sigData,
+    startDate:    C.startDate,
+    endDate:      C.endDate,
+    amount:       C.amount,
+    notes:        C.notes   || '',
+    tenantName:   F.tenantName,
+    personName:   F.personName,
+    contractDate: F.contractDate,
+    address:      F.address,
+    shopName:     F.shopName,
+    shopAddress:  F.shopAddress,
+    tel:          F.tel,
+    sigName:      F.tenantName,
+    email:        F.email
+  };
+
+  // GAS_URLをURLパラメータまたはwindow変数から取得
+  // GAS上で動く場合: google.script.run を使用
+  // GitHub Pages上で動く場合: fetchでGASのdoPostを呼び出す
+  if (typeof google !== 'undefined' && google.script) {
+    // GAS上での実行
+    google.script.run
+      .withSuccessHandler(function(res) {
+        hideOv();
+        showStep3(ts, res);
+      })
+      .withFailureHandler(function(err) {
+        hideOv();
+        showStep3(ts, { success: false, error: err.message });
+      })
+      .saveSignLog(payload);
+  } else {
+    // GitHub Pages上での実行 → GASのdoPostにfetchで送信
+    var gasUrl = window.GAS_URL || '';
+    if (!gasUrl) {
+      hideOv();
+      showStep3(ts, { success: false, error: 'GAS_URLが設定されていません' });
+      return;
+    }
+    fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) { hideOv(); showStep3(ts, res); })
+    .catch(function(err) { hideOv(); showStep3(ts, { success: false, error: err.message }); });
+  }
+}
+
+// ── STEP 3 ──
+function showStep3(ts, gasRes) {
+  document.getElementById('root').innerHTML = progHtml(3)
+    + '<div class="card">'
+    +   '<div class="ch"><div class="chlb">COMPLETE</div><div class="cht">申込完了</div></div>'
+    +   '<div class="cb">'
+    +     '<div class="done">'
+    +       '<div class="dchk">✓</div>'
+    +       '<h2>お申込みありがとうございました</h2>'
+    +       '<p>電子署名・申込が完了しました。<br>担当者よりご連絡いたします。</p>'
+    +       '<div class="dinfo">'
+    +         '<strong>契約ID</strong>　' + esc(C.id) + '<br>'
+    +         '<strong>契約年月日</strong>　' + fd(F.contractDate) + '<br>'
+    +         '<strong>賃借人名</strong>　' + esc(F.tenantName) + '<br>'
+    +         '<strong>賃借期間</strong>　' + fd(C.startDate) + ' 〜 ' + fd(C.endDate) + '<br>'
+    +         '<strong>月額金額</strong>　' + fy(C.amount) + '<br>'
+    +         '<strong>署名日時</strong>　' + esc(ts)
+    +       '</div>'
+    +       '<p class="cnote">内容に関するご確認は担当者までお問い合わせください。</p>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderErr() {
+  document.getElementById('root').innerHTML
+    = '<div class="errpg"><div class="ei">🔗</div><h2>URLが無効です</h2><p>このURLは無効です。<br>担当者より正しいURLをお受け取りください。</p></div>';
+}
+</script>
+</body>
+</html>
