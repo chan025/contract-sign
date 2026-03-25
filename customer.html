@@ -140,7 +140,15 @@ var C = null, F = {}, sat = null;
 var sigCanvas, sigCtx, sigDrawing = false, sigLastX = 0, sigLastY = 0, sigHasData = false;
 
 function fy(v) { if (!v) return '—'; return '¥' + parseInt(v).toLocaleString('ja-JP'); }
-function fd(v) { if (!v) return '—'; var d = new Date(v); return isNaN(d.getTime()) ? String(v) : d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'}); }
+// 日本語テキスト（例: 2026年3月31日）はそのまま表示、ISO形式のみ変換
+function fd(v) {
+  if (!v) return '—';
+  // すでに日本語形式ならそのまま返す
+  if (String(v).match(/\d+年\d+月\d+日/)) return String(v);
+  // ISO形式（2026-03-31）なら変換
+  var d = new Date(v);
+  return isNaN(d.getTime()) ? String(v) : d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+}
 function vl(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
 function showOv(m) { document.getElementById('ovmsg').textContent = m||'処理中...'; document.getElementById('ovly').classList.add('show'); }
 function hideOv() { document.getElementById('ovly').classList.remove('show'); }
@@ -415,7 +423,7 @@ function showStep3(ts, gasRes) {
     +         '<strong>契約ID</strong>　' + esc(C.id) + '<br>'
     +         '<strong>契約年月日</strong>　' + esc(F.contractDate) + '<br>'
     +         '<strong>賃借人名</strong>　' + esc(F.tenantName) + '<br>'
-    +         '<strong>賃借期間</strong>　' + esc(C.startDate||'') + ' 〜 ' + esc(C.endDate||'') + '<br>'
+    +         '<strong>賃借期間</strong>　' + esc(fd(C.startDate||'')) + ' 〜 ' + esc(fd(C.endDate||'')) + '<br>'
     +         '<strong>月額金額</strong>　' + fy(C.amount) + '<br>'
     +         '<strong>署名日時</strong>　' + esc(ts)
     +       '</div>'
