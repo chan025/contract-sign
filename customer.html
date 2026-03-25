@@ -436,22 +436,36 @@ function doSubmit() {
     // sigImageData は URL長制限のため省略（PDF生成時は別途対応）
   };
 
-  var img = new Image();
-  var sendUrl = GAS_URL + '?action=save&data=' + encodeURIComponent(JSON.stringify(sendPayload));
-  alert('送信URL（先頭100文字）:\n' + sendUrl.substring(0, 100));
-  img.src = sendUrl;
-  img.onload = function() {
+  // フォーム送信方式でGASに送信（CORS完全回避）
+  // 非表示iframeをターゲットにしてページ遷移なしで送信
+  var iframeName = 'gasFrame_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = GAS_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(sendPayload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+
+  // 完了画面は5秒後に表示（GASの処理を待つ）
+  setTimeout(function() {
     hideOv();
-    alert('onload発火（GASから応答あり）');
     showStep3(ts, { success: true });
-  };
-  img.onerror = function() {
-    hideOv();
-    alert('onerror発火（GASからエラー応答）');
-    showStep3(ts, { success: true });
-  };
-  // 5秒でタイムアウト
-  setTimeout(function() { hideOv(); showStep3(ts, { success: true }); }, 5000);
+    // クリーンアップ
+    try { document.body.removeChild(iframe); } catch(e) {}
+    try { document.body.removeChild(form); } catch(e) {}
+  }, 5000);
 }
 
 // ── STEP 3 ──
