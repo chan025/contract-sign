@@ -437,9 +437,17 @@ function doSubmit() {
   };
 
   var img = new Image();
-  img.src = GAS_URL + '?action=save&data=' + encodeURIComponent(JSON.stringify(sendPayload));
-  img.onload = img.onerror = function() {
+  var sendUrl = GAS_URL + '?action=save&data=' + encodeURIComponent(JSON.stringify(sendPayload));
+  alert('送信URL（先頭100文字）:\n' + sendUrl.substring(0, 100));
+  img.src = sendUrl;
+  img.onload = function() {
     hideOv();
+    alert('onload発火（GASから応答あり）');
+    showStep3(ts, { success: true });
+  };
+  img.onerror = function() {
+    hideOv();
+    alert('onerror発火（GASからエラー応答）');
     showStep3(ts, { success: true });
   };
   // 5秒でタイムアウト
