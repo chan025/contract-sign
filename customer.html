@@ -140,19 +140,48 @@ var C = null, F = {}, sat = null;
 var sigCanvas, sigCtx, sigDrawing = false, sigLastX = 0, sigLastY = 0, sigHasData = false;
 
 function fy(v) { if (!v) return '—'; return '¥' + parseInt(v).toLocaleString('ja-JP'); }
-// 日本語テキスト（例: 2026年3月31日）はそのまま表示、ISO形式のみ変換
+
+// 各種日付形式を「○年○月○日」に変換
+function parseJpDate(v) {
+  if (!v) return '';
+  var s = String(v).trim();
+
+  // すでに日本語形式
+  if (s.match(/^\d+年\d+月\d+日$/)) return s;
+
+  var y, m, d;
+
+  // 8桁数字（20260823）
+  var m8 = s.match(/^(\d{4})(\d{2})(\d{2})$/);
+  if (m8) { y = m8[1]; m = parseInt(m8[2]); d = parseInt(m8[3]); }
+
+  // 区切りあり（2026/08/23, 2026-08-23, 2026.08.23）
+  if (!y) {
+    var ms = s.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+    if (ms) { y = ms[1]; m = parseInt(ms[2]); d = parseInt(ms[3]); }
+  }
+
+  if (y && m && d) return y + '年' + m + '月' + d + '日';
+
+  // それ以外はそのまま返す
+  return s;
+}
+
 function fd(v) {
   if (!v) return '—';
-  // すでに日本語形式ならそのまま返す
-  if (String(v).match(/\d+年\d+月\d+日/)) return String(v);
-  // ISO形式（2026-03-31）なら変換
-  var d = new Date(v);
-  return isNaN(d.getTime()) ? String(v) : d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+  return parseJpDate(v) || String(v);
 }
 function vl(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
 function showOv(m) { document.getElementById('ovmsg').textContent = m||'処理中...'; document.getElementById('ovly').classList.add('show'); }
 function hideOv() { document.getElementById('ovly').classList.remove('show'); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function autoConvertDate(id) {
+  var el  = document.getElementById(id);
+  if (!el) return;
+  var val = parseJpDate(el.value.trim());
+  if (val) el.value = val;
+}
 
 // ── Boot ──
 window.addEventListener('load', function() {
@@ -208,7 +237,7 @@ function showStep1() {
     +   '<div class="cb">'
     +     '<div class="fl"><label>賃借人名（会社名）<span class="req">*</span></label><input type="text" id="f_tn" placeholder="株式会社〇〇" value="'+esc(F.tenantName||'')+'"></div>'
     +     '<div class="fl"><label>担当者氏名<span class="req">*</span></label><input type="text" id="f_pn" placeholder="山田 太郎" value="'+esc(F.personName||'')+'"></div>'
-    +     '<div class="fl"><label>契約年月日<span class="req">*</span></label><input type="text" id="f_cd" placeholder="2025年1月1日" value="'+esc(F.contractDate||'')+'"></div>'
+    +     '<div class="fl"><label>契約年月日<span class="req">*</span></label><input type="text" id="f_cd" placeholder="2025年1月1日" onblur="autoConvertDate(\'f_cd\')" value="'+esc(F.contractDate||'')+'"></div>'
     +     '<div class="fl"><label>住所<span class="req">*</span></label><input type="text" id="f_ad" placeholder="東京都渋谷区〇〇 1-2-3" value="'+esc(F.address||'')+'"></div>'
     +     '<div class="g2">'
     +       '<div class="fl"><label>店舗名<span class="req">*</span></label><input type="text" id="f_sn" placeholder="〇〇店" value="'+esc(F.shopName||'')+'"></div>'
