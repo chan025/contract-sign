@@ -3,29 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<base target="_top">
 <title>契約書への署名</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f7f6f3; --white:#fff; --surface:#efece7;
-  --border:#dedad2; --border2:#c0bbb1;
-  --text:#1a1814; --muted:#78746a; --dim:#aeaaa2;
-  --accent:#1e4d8c; --al:rgba(30,77,140,0.08);
-  --green:#166639; --gl:rgba(22,102,57,0.09);
+  --bg:#f7f6f3;--white:#fff;--surface:#efece7;
+  --border:#dedad2;--border2:#c0bbb1;
+  --text:#1a1814;--muted:#78746a;--dim:#aeaaa2;
+  --accent:#1e4d8c;--al:rgba(30,77,140,0.08);
+  --green:#166639;--gl:rgba(22,102,57,0.09);
   --red:#b52e2e;
   --shadow:0 1px 3px rgba(26,24,20,0.06),0 4px 16px rgba(26,24,20,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif;color:var(--text);padding-bottom:80px;}
-
 .topbar{background:var(--white);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 5px rgba(26,24,20,0.07);}
 .tb-brand{font-size:14px;font-weight:700;}
 .tb-id{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px 8px;}
 .tb-ssl{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;}
-
 .wrap{max-width:680px;margin:0 auto;padding:32px 16px;}
-
 .steps{display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
 .st{display:flex;flex-direction:column;align-items:center;gap:5px;}
 .stc{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);transition:all 0.3s;}
@@ -36,19 +32,16 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 .st.ok .stl{color:var(--green);}
 .sl{flex:1;max-width:52px;height:1px;background:var(--border);margin-top:-15px;transition:background 0.3s;}
 .sl.ok{background:var(--green);}
-
 .card{background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin-bottom:13px;overflow:hidden;}
 .ch{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
 .chlb{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--muted);flex-shrink:0;}
 .cht{font-size:14px;font-weight:500;}
 .chs{font-size:11px;color:var(--muted);margin-top:3px;}
 .cb{padding:20px;}
-
 .ov{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 16px;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;}
 .ovl{font-size:10px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
 .ovv{font-size:13px;font-weight:500;}
 .ovbig{font-family:'DM Mono',monospace;font-size:17px;color:var(--accent);}
-
 .fl{margin-bottom:15px;}
 .fl label{display:block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
 .req{color:var(--red);margin-left:2px;}
@@ -57,8 +50,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 .fl input::placeholder{color:var(--dim);font-size:13px;}
 .fl input.err{border-color:var(--red);background:#fff8f8;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
-
-/* ── 手書き署名キャンバス ── */
 .sig-area{margin-bottom:6px;}
 .sig-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .sig-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
@@ -74,8 +65,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 .sig-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;}
 .sig-err{font-size:11px;color:var(--red);margin-top:5px;display:none;}
 .sig-err.show{display:block;}
-
-/* Agreement */
 .agbox{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px;margin-top:4px;}
 .aglbl{display:flex;align-items:flex-start;gap:11px;cursor:pointer;}
 .aglbl input[type=checkbox]{width:21px;height:21px;flex-shrink:0;accent-color:var(--accent);cursor:pointer;margin-top:1px;}
@@ -85,8 +74,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 .tsrow.on{color:var(--green);border-color:rgba(22,102,57,0.3);background:var(--gl);}
 .agree-err{font-size:11px;color:var(--red);margin-top:5px;display:none;}
 .agree-err.show{display:block;}
-
-/* Buttons */
 .btnrow{display:flex;gap:9px;justify-content:flex-end;margin-top:20px;}
 .bbk{background:var(--white);color:var(--muted);border:1.5px solid var(--border);border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;transition:all 0.18s;}
 .bbk:hover{color:var(--text);border-color:var(--border2);}
@@ -96,15 +83,11 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 .bnx:disabled{background:var(--dim);box-shadow:none;cursor:not-allowed;transform:none;}
 .bng{background:var(--green);box-shadow:0 2px 8px rgba(22,102,57,0.2);}
 .bng:hover{background:#0e4a28;}
-
-/* Overlay */
 .ovly{display:none;position:fixed;inset:0;background:rgba(247,246,243,0.93);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:13px;}
 .ovly.show{display:flex;}
 .spin{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp 0.75s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
 .spin-msg{font-size:13px;color:var(--muted);}
-
-/* Complete */
 .done{text-align:center;padding:8px 0 2px;}
 .dchk{width:72px;height:72px;border-radius:50%;background:var(--gl);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;animation:pp 0.45s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 4px 16px rgba(22,102,57,0.14);}
 @keyframes pp{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
@@ -113,13 +96,10 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 .dinfo{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;text-align:left;font-size:12px;line-height:2.1;color:var(--muted);margin:18px 0;}
 .dinfo strong{color:var(--text);}
 .cnote{font-size:11px;color:var(--dim);margin-top:14px;line-height:1.7;text-align:center;}
-
-/* Error */
 .errpg{text-align:center;padding:68px 18px;}
 .errpg .ei{font-size:42px;margin-bottom:13px;}
 .errpg h2{font-size:17px;margin-bottom:6px;}
 .errpg p{font-size:13px;color:var(--muted);line-height:1.8;}
-
 @media(max-width:500px){
   .cb,.ch{padding-left:14px;padding-right:14px;}
   .g2{grid-template-columns:1fr;}
@@ -131,8 +111,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 </style>
 </head>
 <body>
-
-<div id="gasdata" data-encoded="<?= encodedData ?>" style="display:none"></div>
 
 <div class="topbar">
   <div class="tb-brand">契約書 電子締結</div>
@@ -155,9 +133,10 @@ body{background:var(--bg);min-height:100vh;font-family:'Noto Sans JP',sans-serif
 </div>
 
 <script>
-var C   = null;
-var F   = {};
-var sat = null;
+// ★ GASのデプロイURLを設定（末尾のスラッシュなし）
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzWM94MqOQcgSeneUDuSGEjwaweyEakTGYjTBg0lAUntlkCTDYMTjcpX45DOVLWh13rKw/exec';
+
+var C = null, F = {}, sat = null;
 var sigCanvas, sigCtx, sigDrawing = false, sigLastX = 0, sigLastY = 0, sigHasData = false;
 
 function fy(v) { if (!v) return '—'; return '¥' + parseInt(v).toLocaleString('ja-JP'); }
@@ -170,23 +149,13 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 // ── Boot ──
 window.addEventListener('load', function() {
   try {
-    var el = document.getElementById('gasdata');
-    var encoded = el ? (el.getAttribute('data-encoded') || '') : '';
+    // URLパラメータから直接取得（GitHub Pagesではテンプレート不要）
+    var params  = new URLSearchParams(window.location.search);
+    var encoded = params.get('d') || '';
     if (!encoded) { renderErr(); return; }
 
-    // GASテンプレートがHTMLエスケープした文字を元に戻す
-    encoded = encoded
-      .replace(/&#43;/g, '+')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/\s/g, '');  // 空白・改行を除去
-
-    // URLセーフBase64（-と_）を通常Base64（+と/）に戻す
+    // URLセーフBase64を通常Base64に戻す
     encoded = encoded.replace(/-/g, '+').replace(/_/g, '/');
-    // パディング補完
     while (encoded.length % 4 !== 0) { encoded += '='; }
 
     C = JSON.parse(decodeURIComponent(escape(atob(encoded))));
@@ -194,7 +163,7 @@ window.addEventListener('load', function() {
     document.getElementById('tbid').textContent = 'ID: ' + C.id;
     showStep1();
   } catch(e) {
-    console.error('Boot error:', e.message, e);
+    console.error(e);
     renderErr();
   }
 });
@@ -219,8 +188,8 @@ function showStep1() {
     +   '<div class="ch"><div class="chlb">CONTRACT</div><div class="cht">ご契約内容</div></div>'
     +   '<div class="cb">'
     +     '<div class="ov">'
-    +       '<div><div class="ovl">賃借開始日</div><div class="ovv">'+fd(C.startDate)+'</div></div>'
-    +       '<div><div class="ovl">賃借終了日</div><div class="ovv">'+fd(C.endDate)+'</div></div>'
+    +       '<div><div class="ovl">賃借開始日</div><div class="ovv">'+esc(C.startDate||'')+'</div></div>'
+    +       '<div><div class="ovl">賃借終了日</div><div class="ovv">'+esc(C.endDate||'')+'</div></div>'
     +       '<div><div class="ovl">月額金額</div><div class="ovv ovbig">'+fy(C.amount)+'</div></div>'
     +       (C.notes ? '<div><div class="ovl">特記事項</div><div class="ovv" style="font-size:11px;color:var(--muted)">'+esc(C.notes.substring(0,40))+'</div></div>' : '')
     +     '</div>'
@@ -231,7 +200,7 @@ function showStep1() {
     +   '<div class="cb">'
     +     '<div class="fl"><label>賃借人名（会社名）<span class="req">*</span></label><input type="text" id="f_tn" placeholder="株式会社〇〇" value="'+esc(F.tenantName||'')+'"></div>'
     +     '<div class="fl"><label>担当者氏名<span class="req">*</span></label><input type="text" id="f_pn" placeholder="山田 太郎" value="'+esc(F.personName||'')+'"></div>'
-    +     '<div class="fl"><label>契約年月日<span class="req">*</span></label><input type="text" id="f_cd" placeholder="2025年1月1日" value="'+esc(F.contractDate||'')+'" inputmode="text"></div>'
+    +     '<div class="fl"><label>契約年月日<span class="req">*</span></label><input type="text" id="f_cd" placeholder="2025年1月1日" value="'+esc(F.contractDate||'')+'"></div>'
     +     '<div class="fl"><label>住所<span class="req">*</span></label><input type="text" id="f_ad" placeholder="東京都渋谷区〇〇 1-2-3" value="'+esc(F.address||'')+'"></div>'
     +     '<div class="g2">'
     +       '<div class="fl"><label>店舗名<span class="req">*</span></label><input type="text" id="f_sn" placeholder="〇〇店" value="'+esc(F.shopName||'')+'"></div>'
@@ -256,14 +225,12 @@ function goStep2() {
   showStep2();
 }
 
-// ── STEP 2 ── 手書き署名 + 同意
+// ── STEP 2 ──
 function showStep2() {
   document.getElementById('root').innerHTML = progHtml(2)
     + '<div class="card">'
     +   '<div class="ch"><div class="chlb">STEP 02</div><div><div class="cht">直筆署名・同意確認</div><div class="chs">署名欄に直筆でご署名の上、同意にチェックを入れてください</div></div></div>'
     +   '<div class="cb">'
-
-    // 手書き署名エリア
     +     '<div class="sig-area">'
     +       '<div class="sig-label-row">'
     +         '<span class="sig-label">直筆署名<span class="sig-req">*</span></span>'
@@ -277,8 +244,6 @@ function showStep2() {
     +       '<div class="sig-hint">※ こちらの直筆署名が電子署名として契約書に記録されます</div>'
     +       '<div class="sig-err" id="sigErr">署名を入力してください</div>'
     +     '</div>'
-
-    // 同意チェック
     +     '<div class="agbox">'
     +       '<label class="aglbl">'
     +         '<input type="checkbox" id="agchk" onchange="onAgree()">'
@@ -289,7 +254,6 @@ function showStep2() {
     +       '<div class="tsrow" id="tsrow">署名日時：同意チェック後に記録されます</div>'
     +       '<div class="agree-err" id="agErr">同意のチェックを入れてください</div>'
     +     '</div>'
-
     +     '<div class="btnrow">'
     +       '<button class="bbk" onclick="showStep1()">← 戻る</button>'
     +       '<button class="bnx bng" id="subbtn" onclick="doSubmit()" disabled>✓ 申込を完了する</button>'
@@ -301,12 +265,11 @@ function showStep2() {
   initCanvas();
 }
 
-// ── Canvas 初期化 ──
+// ── Canvas ──
 function initCanvas() {
   sigCanvas  = document.getElementById('sigCanvas');
   sigCtx     = sigCanvas.getContext('2d');
   sigHasData = false;
-
   var dpr = window.devicePixelRatio || 1;
   var w   = sigCanvas.parentElement.clientWidth;
   sigCanvas.width  = w * dpr;
@@ -349,7 +312,6 @@ function initCanvas() {
     sigDrawing = false;
     document.getElementById('canvasWrap').classList.remove('active');
   }
-
   sigCanvas.addEventListener('mousedown',  startDraw);
   sigCanvas.addEventListener('mousemove',  draw);
   sigCanvas.addEventListener('mouseup',    endDraw);
@@ -387,17 +349,11 @@ function onAgree() {
 
 // ── Submit ──
 function doSubmit() {
-  if (!sigHasData) {
-    document.getElementById('sigErr').classList.add('show');
-    return;
-  }
-  if (!document.getElementById('agchk').checked) {
-    document.getElementById('agErr').classList.add('show');
-    return;
-  }
+  if (!sigHasData) { document.getElementById('sigErr').classList.add('show'); return; }
+  if (!document.getElementById('agchk').checked) { document.getElementById('agErr').classList.add('show'); return; }
 
   var ts      = sat ? sat.toLocaleString('ja-JP') : new Date().toLocaleString('ja-JP');
-  var sigData = sigCanvas.toDataURL('image/png');  // 署名画像（Base64）
+  var sigData = sigCanvas.toDataURL('image/png');
 
   showOv('契約書を処理しています...');
 
@@ -421,38 +377,21 @@ function doSubmit() {
     email:        F.email
   };
 
-  // GAS_URLをURLパラメータまたはwindow変数から取得
-  // GAS上で動く場合: google.script.run を使用
-  // GitHub Pages上で動く場合: fetchでGASのdoPostを呼び出す
-  if (typeof google !== 'undefined' && google.script) {
-    // GAS上での実行
-    google.script.run
-      .withSuccessHandler(function(res) {
-        hideOv();
-        showStep3(ts, res);
-      })
-      .withFailureHandler(function(err) {
-        hideOv();
-        showStep3(ts, { success: false, error: err.message });
-      })
-      .saveSignLog(payload);
-  } else {
-    // GitHub Pages上での実行 → GASのdoPostにfetchで送信
-    var gasUrl = window.GAS_URL || '';
-    if (!gasUrl) {
-      hideOv();
-      showStep3(ts, { success: false, error: 'GAS_URLが設定されていません' });
-      return;
-    }
-    fetch(gasUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(res) { hideOv(); showStep3(ts, res); })
-    .catch(function(err) { hideOv(); showStep3(ts, { success: false, error: err.message }); });
-  }
+  // fetch() でGASのdoPostに送信
+  fetch(GAS_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body:    JSON.stringify(payload)
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(res) {
+    hideOv();
+    showStep3(ts, res);
+  })
+  .catch(function(err) {
+    hideOv();
+    showStep3(ts, { success: false, error: err.message });
+  });
 }
 
 // ── STEP 3 ──
@@ -467,9 +406,9 @@ function showStep3(ts, gasRes) {
     +       '<p>電子署名・申込が完了しました。<br>担当者よりご連絡いたします。</p>'
     +       '<div class="dinfo">'
     +         '<strong>契約ID</strong>　' + esc(C.id) + '<br>'
-    +         '<strong>契約年月日</strong>　' + fd(F.contractDate) + '<br>'
+    +         '<strong>契約年月日</strong>　' + esc(F.contractDate) + '<br>'
     +         '<strong>賃借人名</strong>　' + esc(F.tenantName) + '<br>'
-    +         '<strong>賃借期間</strong>　' + fd(C.startDate) + ' 〜 ' + fd(C.endDate) + '<br>'
+    +         '<strong>賃借期間</strong>　' + esc(C.startDate||'') + ' 〜 ' + esc(C.endDate||'') + '<br>'
     +         '<strong>月額金額</strong>　' + fy(C.amount) + '<br>'
     +         '<strong>署名日時</strong>　' + esc(ts)
     +       '</div>'
